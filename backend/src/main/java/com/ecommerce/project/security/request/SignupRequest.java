@@ -1,14 +1,15 @@
 package com.ecommerce.project.security.request;
 
-import java.util.Set;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class SignupRequest {
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 7, max = 20)
     private String username;
 
     @NotBlank
@@ -16,17 +17,12 @@ public class SignupRequest {
     @Email
     private String email;
 
-    private Set<String> role;
-
     @NotBlank
-    @Size(min = 6, max = 40)
+    @Size(min = 8)
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).+$",
+            message = "Password must contain uppercase, lowercase, number and special character"
+    )
     private String password;
 
-    public Set<String> getRole() {
-        return this.role;
-    }
-
-    public void setRole(Set<String> role) {
-        this.role = role;
-    }
 }

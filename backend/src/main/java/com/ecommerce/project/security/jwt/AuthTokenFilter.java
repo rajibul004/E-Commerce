@@ -55,6 +55,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        System.out.println("PATH: " + path); // debug
+
+        return path.startsWith("/api/auth/");
+    }
+
     private String parseJwt(HttpServletRequest request) {
         String jwt = jwtUtils.getJwtFromCookies(request);
         logger.debug("AuthTokenFilter.java: {}", jwt);

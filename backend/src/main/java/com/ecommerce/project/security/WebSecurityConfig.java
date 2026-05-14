@@ -90,6 +90,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                                 .anyRequest().authenticated()
+
                 );
 
 
@@ -102,6 +103,7 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -137,25 +139,19 @@ public class WebSecurityConfig {
             // Create users if not already present
             if (!userRepository.existsByUserName("user1")) {
                 User user1 = new User("user1", "user1@example.com", passwordEncoder.encode("password1"));
+                user1.setRoles(userRoles);
                 userRepository.save(user1);
             }
 
             if (!userRepository.existsByUserName("admin")) {
-                User admin = new User("admin", "admin@example.com", passwordEncoder.encode("adminPass"));
+                User admin = new User("admin", "admin@example.com", passwordEncoder.encode("Admin"));
+                admin.setRoles(adminRoles);
+
                 userRepository.save(admin);
+
             }
 
-            // Update roles for existing users
-            userRepository.findByUserName("user1").ifPresent(user -> {
-                user.setRoles(userRoles);
-                userRepository.save(user);
-            });
-
-            userRepository.findByUserName("admin").ifPresent(admin -> {
-                admin.setRoles(adminRoles);
-                userRepository.save(admin);
-            });
-        };
+       };
     }
 
 }

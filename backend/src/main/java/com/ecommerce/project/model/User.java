@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "users",
         uniqueConstraints = {
@@ -59,9 +60,6 @@ public class User {
     @Getter
     @Setter
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-//    @JoinTable(name = "user_address",
-//                joinColumns = @JoinColumn(name = "user_id"),
-//                inverseJoinColumns = @JoinColumn(name = "address_id"))
     private List<Address> addresses = new ArrayList<>();
 
     @ToString.Exclude
