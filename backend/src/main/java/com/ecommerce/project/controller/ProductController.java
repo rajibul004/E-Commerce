@@ -1,8 +1,10 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.config.AppConstants;
+import com.ecommerce.project.model.Category;
 import com.ecommerce.project.payload.ProductDTO;
 import com.ecommerce.project.payload.ProductResponse;
+import com.ecommerce.project.service.CategoryService;
 import com.ecommerce.project.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class ProductController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    CategoryService categoryService;
 
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO,
@@ -60,18 +65,18 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
     }
 
-    @PutMapping("/admin/products/{productId}")
-    public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO,
-                                                    @PathVariable Long productId){
-        ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
-        return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/admin/products/{productId}")
-    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId){
-        ProductDTO deletedProduct = productService.deleteProduct(productId);
-        return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
-    }
+//    @PutMapping("/admin/products/{productId}")
+//    public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO,
+//                                                    @PathVariable Long productId){
+//        ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
+//        return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
+//    }
+//
+//    @DeleteMapping("/admin/products/{productId}")
+//    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId){
+//        ProductDTO deletedProduct = productService.deleteProduct(productId);
+//        return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
+//    }
 
     @PutMapping("/products/{productId}/image")
     public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId,

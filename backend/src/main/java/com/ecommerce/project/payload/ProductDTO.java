@@ -15,6 +15,8 @@ public class ProductDTO {
     @JsonProperty("image")
     private String imageBase64; // Changed from image to imageBase64 for Base64-encoded image
 
+    private CategoryDTO category;
+
     private String description;
     private Integer quantity;
     private double price;

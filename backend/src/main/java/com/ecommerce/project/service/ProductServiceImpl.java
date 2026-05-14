@@ -55,6 +55,12 @@ public class ProductServiceImpl implements ProductService {
                 isProductNotPresent = false;
                 break;
             }
+            boolean exists = productRepository
+                    .existsByProductNameAndCategory(productDTO.getProductName(), category);
+
+            if (exists) {
+                throw new APIException("Product already exists!!");
+            }
         }
 
         if (isProductNotPresent) {
@@ -182,60 +188,60 @@ public class ProductServiceImpl implements ProductService {
         return productResponse;
     }
 
-    @Override
-    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
-        Product productFromDb = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
-        Product product = modelMapper.map(productDTO, Product.class);
-
-        productFromDb.setProductName(product.getProductName());
-        productFromDb.setDescription(product.getDescription());
-        productFromDb.setQuantity(product.getQuantity());
-        productFromDb.setPrice(product.getPrice());
-
-        Product savedProduct = productRepository.save(productFromDb);
-
-        List<Cart> carts = cartRepository.findCartsByProductId(productId);
-
-        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
-            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-            List<ProductDTO> products = cart.getCartItems().stream()
-                    .map(p -> {
-                        ProductDTO pDTO = modelMapper.map(p.getProduct(), ProductDTO.class);
-                        if (p.getProduct().getImage() != null) {
-                            pDTO.setImageBase64(Base64.getEncoder().encodeToString(p.getProduct().getImage()));
-                        }
-                        return pDTO;
-                    }).collect(Collectors.toList());
-            cartDTO.setProducts(products);
-            return cartDTO;
-        }).collect(Collectors.toList());
-
-        cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), productId));
-
-        ProductDTO savedProductDTO = modelMapper.map(savedProduct, ProductDTO.class);
-        if (savedProduct.getImage() != null) {
-            savedProductDTO.setImageBase64(Base64.getEncoder().encodeToString(savedProduct.getImage()));
-        }
-        return savedProductDTO;
-    }
-
-    @Override
-    public ProductDTO deleteProduct(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
-        List<Cart> carts = cartRepository.findCartsByProductId(productId);
-        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
-
-        productRepository.delete(product);
-        ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-        if (product.getImage() != null) {
-            productDTO.setImageBase64(Base64.getEncoder().encodeToString(product.getImage()));
-        }
-        return productDTO;
-    }
+//    @Override
+//    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
+//        Product productFromDb = productRepository.findById(productId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+//
+//        Product product = modelMapper.map(productDTO, Product.class);
+//
+//        productFromDb.setProductName(product.getProductName());
+//        productFromDb.setDescription(product.getDescription());
+//        productFromDb.setQuantity(product.getQuantity());
+//        productFromDb.setPrice(product.getPrice());
+//
+//        Product savedProduct = productRepository.save(productFromDb);
+//
+//        List<Cart> carts = cartRepository.(productId);
+//
+//        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+//            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+//            List<ProductDTO> products = cart.getCartItems().stream()
+//                    .map(p -> {
+//                        ProductDTO pDTO = modelMapper.map(p.getProduct(), ProductDTO.class);
+//                        if (p.getProduct().getImage() != null) {
+//                            pDTO.setImageBase64(Base64.getEncoder().encodeToString(p.getProduct().getImage()));
+//                        }
+//                        return pDTO;
+//                    }).collect(Collectors.toList());
+//            cartDTO.setProducts(products);
+//            return cartDTO;
+//        }).collect(Collectors.toList());
+//
+//        cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), productId));
+//
+//        ProductDTO savedProductDTO = modelMapper.map(savedProduct, ProductDTO.class);
+//        if (savedProduct.getImage() != null) {
+//            savedProductDTO.setImageBase64(Base64.getEncoder().encodeToString(savedProduct.getImage()));
+//        }
+//        return savedProductDTO;
+//    }
+//
+//    @Override
+//    public ProductDTO deleteProduct(Long productId) {
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+//
+//        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+//        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
+//
+//        productRepository.delete(product);
+//        ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+//        if (product.getImage() != null) {
+//            productDTO.setImageBase64(Base64.getEncoder().encodeToString(product.getImage()));
+//        }
+//        return productDTO;
+//    }
 
     @Override
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
